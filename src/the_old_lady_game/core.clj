@@ -23,13 +23,16 @@
   (let [tuple (position->dimensions board (Integer. position))]
     (assoc-in board tuple "X")))
 
+(defn receive-move []
+  read-line)
+
 (defn -main
   [& args]
   (let [player1 (rand-nth ["X" "O"])]
     (println "===== NEW GAME STARTED! =====\n" "Player" player1 ", pick a position by entering its number (Or \"quit\" to quit the game)")
     (println (visual-board board3x3))
-    (loop [input (read-line)]
+    (loop [input (read-line) board board3x3]
     (when-not (= "quit" input)
-      (println (visual-board (play board3x3 input)))
-      (recur (read-line))))
+      (println "New board: \n " (visual-board (play board input)))
+      (recur (read-line) (play board input))))
       (println "\n ====== GAME OVER =====")))
