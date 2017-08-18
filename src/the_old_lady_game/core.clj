@@ -3,13 +3,18 @@
             [clojure.string :as s])
   (:gen-class))
 
+(def a-nought " O ")
+
+(def a-cross " X ")
+
 (def board3x3
-  [[0 1 2] [3 4 5] [6 7 8]])
+  [["[0]" "[1]" "[2]"] ["[3]" "[4]" "[5]"] ["[6]" "[7]" "[8]"]])
 
 (def board4x4
   [[0 1 2 3] [4 5 6 7] [8 9 10 11] [12 13 14 15]])
 
 (defn visual-board [board]
+  "Visual representation on the board for terminal"
     (str "\n" (s/join "\n\n" (map #(s/join "\t" %) board)) "\n\n"))
 
 (defn position->dimensions [board position]
@@ -19,12 +24,19 @@
         column (int (mod position width))]
       (vector row column)))
 
-(defn play [board position]
-  (let [tuple (position->dimensions board (Integer. position))]
-    (assoc-in board tuple "X")))
+(defn valid-move? [board tuple]
+  (not (or (= a-nought (get-in board tuple)) (= a-cross (get-in board tuple)))))
 
-(defn receive-move []
-  read-line)
+(defn play [board position]
+  "Performs the move based on the current board and position provided"
+  (let [tuple (position->dimensions board (Integer. position))
+        flat-board (flatten board)
+        noughts-count (count (filter #(= a-nought %) flat-board))
+        crosses-count (count (filter #(= a-cross %) flat-board))
+        player-symbol (if (> noughts-count crosses-count) a-cross a-nought)]
+        (if (valid-move? board tuple)
+              (assoc-in board tuple player-symbol)
+              board)))
 
 (defn -main
   [& args]
