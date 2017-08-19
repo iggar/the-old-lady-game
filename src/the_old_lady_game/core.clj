@@ -28,12 +28,16 @@
 (defn valid-move? [board tuple]
   (not (or (= a-nought (get-in board tuple)) (= a-cross (get-in board tuple)))))
 
+(defn symbol-count [col symbol]
+  (count (filter #(= symbol %) col)))
+  ;would (symbol (frequencies col)) be better?
+
 (defn play [board position]
   "Performs the move based on the current board and position provided"
   (let [tuple (position->dimensions board (Integer. position))
         flat-board (flatten board)
-        noughts-count (count (filter #(= a-nought %) flat-board))
-        crosses-count (count (filter #(= a-cross %) flat-board))
+        noughts-count (symbol-count flat-board a-nought)
+        crosses-count (symbol-count flat-board a-cross)
         player-symbol (if (> crosses-count noughts-count) a-nought a-cross)]
         (if (valid-move? board tuple)
               (assoc-in board tuple player-symbol)
