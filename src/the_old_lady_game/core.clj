@@ -11,7 +11,8 @@
   [["[0]" "[1]" "[2]"] ["[3]" "[4]" "[5]"] ["[6]" "[7]" "[8]"]])
 
 (def board4x4
-  [[0 1 2 3] [4 5 6 7] [8 9 10 11] [12 13 14 15]])
+  [["[0]" "[1]" "[2]" "[3]"] ["[4]" "[5]" "[6]" "[7]"]
+   ["[8]" "[9]" "[10]" "[11]"] ["[12]" "[13]" "[14]" "[15]"]])
 
 (defn visual-board [board]
   "Visual representation on the board for terminal"
@@ -33,18 +34,18 @@
         flat-board (flatten board)
         noughts-count (count (filter #(= a-nought %) flat-board))
         crosses-count (count (filter #(= a-cross %) flat-board))
-        player-symbol (if (> noughts-count crosses-count) a-cross a-nought)]
+        player-symbol (if (> crosses-count noughts-count) a-nought a-cross)]
         (if (valid-move? board tuple)
               (assoc-in board tuple player-symbol)
               board)))
-
 (defn -main
   [& args]
-  (let [player1 (rand-nth ["X" "O"])]
-    (println "===== NEW GAME STARTED! =====\n" "Player" player1 ", pick a position by entering its number (Or \"quit\" to quit the game)")
+    (println "===== NEW GAME STARTED! =====\n"
+             "Player 'X', pick a position by entering its number"
+             " (or \"quit\" to quit the game)")
     (println (visual-board board3x3))
     (loop [input (read-line) board board3x3]
     (when-not (= "quit" input)
-      (println "New board: \n " (visual-board (play board input)))
+      (println "Current board: \n " (visual-board (play board input)))
       (recur (read-line) (play board input))))
-      (println "\n ====== GAME OVER =====")))
+      (println "\n ====== GAME OVER ====="))
