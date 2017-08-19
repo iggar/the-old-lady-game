@@ -30,7 +30,6 @@
 
 (defn symbol-count [col symbol]
   (count (filter #(= symbol %) col)))
-  ;would (symbol (frequencies col)) be better?
 
 (defn play [board position]
   "Performs the move based on the current board and position provided"
@@ -40,16 +39,20 @@
         crosses-count (symbol-count flat-board a-cross)
         player-symbol (if (> crosses-count noughts-count) a-nought a-cross)]
         (if (valid-move? board tuple)
-              (assoc-in board tuple player-symbol)
-              board)))
+          (do
+            (println "Current board: \n " (visual-board (assoc-in board tuple player-symbol)))
+            (assoc-in board tuple player-symbol))
+          (do
+            (println "Invalid move, try again. Current board: \n " (visual-board (assoc-in board tuple player-symbol)))
+            board))))
+
 (defn -main
   [& args]
-    (println "===== NEW GAME STARTED! =====\n"
-             "Player 'X', pick a position by entering its number"
-             " (or \"quit\" to quit the game)")
+    (println "\n===== NEW GAME STARTED! =====")
     (println (visual-board board3x3))
-    (loop [input (read-line) board board3x3]
-    (when-not (= "quit" input)
-      (println "Current board: \n " (visual-board (play board input)))
-      (recur (read-line) (play board input))))
-      (println "\n ====== GAME OVER ====="))
+    (println "Player 'X' starts. Choose a position by entering its number"
+             " (or \"quit\" to quit the game)")
+    (loop [board board3x3 input (read-line)]
+      (when-not (= "quit" input)
+        (recur (play board input) (read-line))))
+    (println ">>> GAME OVER <<<"))
