@@ -26,44 +26,35 @@
       (vector row column)))
 
 (defn valid-move? [board tuple]
+  "Checks if the move is valid, that means, there's not any symbol
+  on the cell yet"
   (not (or (= a-nought (get-in board tuple)) (= a-cross (get-in board tuple)))))
 
 (defn symbol-count [col symbol]
+  "Counts the number of occurrences of a symbol in a collection"
   (count (filter #(= symbol %) col)))
 
 (defn check-row [row]
   "Checks if the row contains only one character type. That means this is a winning row"
   (if (= 1 (count (frequencies row))) (first row)))
 
-(defn check-row-board [board rowindex]
-  "Checks if the nth row (rowindex) of the board is a winning row"
-  (check-row (nth board rowindex)))
-
 (defn transpose [matrix]
   "Transposes the board matrix"
   (apply mapv vector matrix))
 
-(defn check-column-board [board columnindex]
-  "Checks if the nth column (columnindex) of the board is a winning column"
-  (check-row-board (transpose board) columnindex))
-
-(defn get-diagonal1 [board]
-  "Gets diagonal values of a 3x3 matrix (noughts-and-crosses board)"
-  (cons (first (first board)) (cons (second (second board)) (cons (last (last board)) []))))
-
-(defn get-diagonal2 [board]
-  "Gets the antidiagonal values of a 3x3 matrix (noughts-and-crosses board)"
-  (cons (last (first board)) (cons (second (second board)) (cons (first (last board)) []))))
+(defn get-diagonal [board]
+  "Gets diagonal values of a n-sized square matrix (noughts-and-crosses board)"
+  (into [] (map #(get-in board %) (map #(vector % %) (range (count board))))))
 
 (defn check-diagonals [board]
   "Checks the two board diagonals and return tru if either one is a winning row"
-  (or (check-row (get-diagonal1 board)) (check-row (get-diagonal2 board))))
+  (or (check-row (get-diagonal board))
+      (check-row (get-diagonal (into [] (reverse board))))))
 
 (defn check-winner [board]
-  "Returns the winner of a board. 0 means noughts win. 1 means crosses win. 'nil' means there is a draw"
-    (or (check-row-board board 0) (check-row-board board 1) (check-row-board board 2)
-      (check-column-board board 0) (check-column-board board 1)
-      (check-column-board board 2) (check-diagonals board)))
+  "Returns the winner of a board or 'nil' if no winner"
+  (or (check-diagonals board) (some identity (map #(check-row %) board))
+    (some identity (map #(check-row %) (transpose board)))))
 
 (defn play [board position]
   "Performs the move based on the current board and position provided.
@@ -87,10 +78,10 @@
 (defn -main
   [& args]
     (println "\n===== NEW GAME STARTED! =====")
-    (println (visual-board board3x3))
+    (println (visual-board board4x4))
     (println "Player 'X' starts. Choose a position by entering its number"
              " (or \"quit\" to quit the game)")
-    (loop [board board3x3]
+    (loop [board board4x4]
       (when-not (or (nil? board))
       (let [input (read-line)]
         (if (not (= "quit" input))
