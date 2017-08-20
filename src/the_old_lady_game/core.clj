@@ -44,7 +44,8 @@
   (into [] (map #(get-in board %) (map #(vector % %) (range (count board))))))
 
 (defn check-diagonals [board]
-  "Checks the two board diagonals and return tru if either one is a winning row"
+  "Checks the two board diagonals and return winner symbol
+  if either one is a winning row"
   (or (check-row (get-diagonal board))
       (check-row (get-diagonal (into [] (reverse board))))))
 
