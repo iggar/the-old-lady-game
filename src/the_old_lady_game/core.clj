@@ -32,7 +32,8 @@
   (count (filter #(= symbol %) col)))
 
 (defn play [board position]
-  "Performs the move based on the current board and position provided"
+  "Performs the move based on the current board and position provided.
+  Returns the updated board or nil in case it's a game over (by win or draw)"
   (let [tuple (position->dimensions board (Integer. position))
         flat-board (flatten board)
         noughts-count (symbol-count flat-board a-nought)
@@ -41,7 +42,7 @@
         (if (valid-move? board tuple)
           (do
             (println "Current board: \n " (visual-board (assoc-in board tuple player-symbol)))
-            (assoc-in board tuple player-symbol))
+            (if (= 1 (rand-nth [1 2 3])) (assoc-in board tuple player-symbol)))
           (do
             (println "Invalid move, try again. Current board: \n " (visual-board (assoc-in board tuple player-symbol)))
             board))))
@@ -53,6 +54,6 @@
     (println "Player 'X' starts. Choose a position by entering its number"
              " (or \"quit\" to quit the game)")
     (loop [board board3x3 input (read-line)]
-      (when-not (= "quit" input)
+      (when-not (or (= "quit" input) (nil? board))
         (recur (play board input) (read-line))))
     (println ">>> GAME OVER <<<"))
