@@ -66,7 +66,9 @@
     (println (visual-board board3x3))
     (println "Player 'X' starts. Choose a position by entering its number"
              " (or \"quit\" to quit the game)")
-    (loop [board board3x3 input (read-line)]
-      (when-not (or (= "quit" input) (nil? board))
-        (recur (play board input) (read-line))))
+    (loop [board board3x3]
+      (when-not (or (nil? board))
+      (let [input (read-line)]
+        (if (not (= "quit" input))
+          (recur (play board input))))))
     (println ">>> GAME OVER <<<"))
