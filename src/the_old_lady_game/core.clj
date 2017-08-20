@@ -39,9 +39,31 @@
   "Checks if the nth row (rowindex) of the board is a winning row"
   (check-row (nth board rowindex)))
 
+(defn transpose [matrix]
+  "Transposes the board matrix"
+  (apply mapv vector matrix))
+
+(defn check-column-board [board columnindex]
+  "Checks if the nth column (columnindex) of the board is a winning column"
+  (check-row-board (transpose board) columnindex))
+
+(defn get-diagonal1 [board]
+  "Gets diagonal values of a 3x3 matrix (noughts-and-crosses board)"
+  (cons (first (first board)) (cons (second (second board)) (cons (last (last board)) []))))
+
+(defn get-diagonal2 [board]
+  "Gets the antidiagonal values of a 3x3 matrix (noughts-and-crosses board)"
+  (cons (last (first board)) (cons (second (second board)) (cons (first (last board)) []))))
+
+(defn check-diagonals [board]
+  "Checks the two board diagonals and return tru if either one is a winning row"
+  (or (check-row (get-diagonal1 board)) (check-row (get-diagonal2 board))))
+
 (defn check-winner [board]
   "Returns the winner of a board. 0 means noughts win. 1 means crosses win. 'nil' means there is a draw"
-  (or (check-row-board board 0) (check-row-board board 1) (check-row-board board 2)))
+    (or (check-row-board board 0) (check-row-board board 1) (check-row-board board 2)
+      (check-column-board board 0) (check-column-board board 1)
+      (check-column-board board 2) (check-diagonals board)))
 
 (defn play [board position]
   "Performs the move based on the current board and position provided.
@@ -52,10 +74,12 @@
         crosses-count (symbol-count flat-board a-cross)
         player-symbol (if (> crosses-count noughts-count) a-nought a-cross)]
         (if (valid-move? board tuple)
-          (let [updated-board (assoc-in board tuple player-symbol)]
+          (let [updated-board (assoc-in board tuple player-symbol)
+                winner (check-winner updated-board)]
             (do
               (println "Current board: \n " (visual-board updated-board))
-              (if (not (check-winner updated-board)) updated-board)))
+              (if winner (println "Winner:" winner))
+              (if (not winner) updated-board)))
           (do
             (println "Invalid move, try again. Current board: \n " (visual-board board))
             board))))
