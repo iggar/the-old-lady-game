@@ -73,17 +73,28 @@
             (println "Invalid move, try again. Current board: \n " (visual-board board))
             board))))
 
+(defn valid-dimension? [arg]
+  (try
+    (let [num (Integer. arg)]
+      (and (pos? num) (< num 100)))
+   (catch Exception e false)))
+
+; (defn valid-position? [pos dimension]
+;   (< pos (* dimension dimension))
+
 (defn -main
   [& args]
-    (let [dimension (Integer. (first args))
-          gameboard (board dimension)]
-    (println "\n===== NEW GAME STARTED! =====")
-    (println (visual-board gameboard))
-    (println "Player 'X' starts. Choose a position by entering its number"
-             " (or \"quit\" to quit the game)")
-    (loop [board gameboard]
-      (when-not (or (nil? board))
-      (let [input (read-line)]
-        (if (not (= "quit" input))
-          (recur (play board input))))))
-    (println ">>> GAME OVER <<<")))
+    (if (valid-dimension? (first args))
+      (let [dimension (Integer. (first args))
+            gameboard (board dimension)]
+        (println "\n===== NEW GAME STARTED! =====")
+        (println (visual-board gameboard))
+        (println "Player 'X' starts. Choose a position by entering its number"
+                 " (or \"quit\" to quit the game)")
+        (loop [board gameboard]
+          (when-not (or (nil? board))
+          (let [input (read-line)]
+            (if (not (= "quit" input))
+              (recur (play board input)))))))
+      (println "Invalid entry. Please provide an integer less than 100"))
+    (println ">>> GAME OVER <<<"))
