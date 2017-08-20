@@ -31,6 +31,18 @@
 (defn symbol-count [col symbol]
   (count (filter #(= symbol %) col)))
 
+(defn check-row [row]
+  "Checks if the row contains only one character type. That means this is a winning row"
+  (if (= 1 (count (frequencies row))) (first row)))
+
+(defn check-row-board [board rowindex]
+  "Checks if the nth row (rowindex) of the board is a winning row"
+  (check-row (nth board rowindex)))
+
+(defn check-winner [board]
+  "Returns the winner of a board. 0 means noughts win. 1 means crosses win. 'nil' means there is a draw"
+  (or (check-row-board board 0) (check-row-board board 1) (check-row-board board 2)))
+
 (defn play [board position]
   "Performs the move based on the current board and position provided.
   Returns the updated board or nil in case it's a game over (by win or draw)"
@@ -40,11 +52,12 @@
         crosses-count (symbol-count flat-board a-cross)
         player-symbol (if (> crosses-count noughts-count) a-nought a-cross)]
         (if (valid-move? board tuple)
+          (let [updated-board (assoc-in board tuple player-symbol)]
+            (do
+              (println "Current board: \n " (visual-board updated-board))
+              (if (not (check-winner updated-board)) updated-board)))
           (do
-            (println "Current board: \n " (visual-board (assoc-in board tuple player-symbol)))
-            (if (= 1 (rand-nth [1 2 3])) (assoc-in board tuple player-symbol)))
-          (do
-            (println "Invalid move, try again. Current board: \n " (visual-board (assoc-in board tuple player-symbol)))
+            (println "Invalid move, try again. Current board: \n " (visual-board board))
             board))))
 
 (defn -main
