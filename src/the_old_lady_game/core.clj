@@ -7,12 +7,9 @@
 
 (def a-cross " X ")
 
-(def board3x3
-  [["[0]" "[1]" "[2]"] ["[3]" "[4]" "[5]"] ["[6]" "[7]" "[8]"]])
-
-(def board4x4
-  [["[0]" "[1]" "[2]" "[3]"] ["[4]" "[5]" "[6]" "[7]"]
-   ["[8]" "[9]" "[10]" "[11]"] ["[12]" "[13]" "[14]" "[15]"]])
+(defn board [size]
+  (let [board-rows (partition size (mapv #(str "[" % "]") (range (* size size))))]
+    (mapv #(into [] %) board-rows)))
 
 (defn visual-board [board]
   "Visual representation on the board for terminal"
@@ -77,13 +74,15 @@
 
 (defn -main
   [& args]
+    (let [dimension (Integer. (first args))
+          gameboard (board dimension)]
     (println "\n===== NEW GAME STARTED! =====")
-    (println (visual-board board4x4))
+    (println (visual-board gameboard))
     (println "Player 'X' starts. Choose a position by entering its number"
              " (or \"quit\" to quit the game)")
-    (loop [board board4x4]
+    (loop [board gameboard]
       (when-not (or (nil? board))
       (let [input (read-line)]
         (if (not (= "quit" input))
           (recur (play board input))))))
-    (println ">>> GAME OVER <<<"))
+    (println ">>> GAME OVER <<<")))
