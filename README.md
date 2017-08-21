@@ -25,6 +25,10 @@ don’t feel restricted to these.
 
 The chosen extension was to extend the game to NxN. An upper limt has been set for a board size of 100, but the logic supports much higher dimensions.
 
+## Compiling / Building
+
+You can build the project with `lein uberjar`. The jar file will be generated under
+the subdirectory `target/uberjar/`
 
 ## Usage
 
