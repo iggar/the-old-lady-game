@@ -81,4 +81,34 @@
       (let [board [[a-cross "[1]" a-cross]
                    [a-nought a-cross a-nought]
                    [a-cross a-nought "[8]"]]]
-          (is (= (check-winner board) a-cross)))))
+          (is (= (check-winner board) a-cross))))
+
+    (testing "sanitise negative"
+      (let [board [["[0]" "[1]" "[2]"]
+                 ["[3]" "[4]" "[5]"]
+                 ["[6]" "[7]" "[8]"]]]
+        (is (= -1 (sanitise -6 board)))))
+
+    (testing "sanitise too large"
+      (let [board [["[0]" "[1]" "[2]"]
+                 ["[3]" "[4]" "[5]"]
+                 ["[6]" "[7]" "[8]"]]]
+        (is (= -1 (sanitise 100000 board)))))
+
+    (testing "sanitise weird chars"
+      (let [board [["[0]" "[1]" "[2]"]
+                 ["[3]" "[4]" "[5]"]
+                 ["[6]" "[7]" "[8]"]]]
+        (is (= -1 (sanitise "iGGar!" board)))))
+
+    (testing "sanitise zero"
+      (let [board [["[0]" "[1]" "[2]"]
+                 ["[3]" "[4]" "[5]"]
+                 ["[6]" "[7]" "[8]"]]]
+        (is (= 0 (sanitise 0 board)))))
+
+    (testing "sanitise position 4 on a 3x3 board"
+      (let [board [["[0]" "[1]" "[2]"]
+                 ["[3]" "[4]" "[5]"]
+                 ["[6]" "[7]" "[8]"]]]
+        (is (= 4 (sanitise 4 board))))))
